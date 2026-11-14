@@ -1,0 +1,7 @@
+Name: PyMuPDF
+Version: 1.26.7
+License: Dual Licensed - GNU AFFERO GPL 3.0 or Artifex Commercial License
+Project-URL: Documentation, https://pymupdf.readthedocs.io/
+Project-URL: Source, https://github.com/pymupdf/pymupdf
+Project-URL: Tracker, https://github.com/pymupdf/PyMuPDF/issues
+Project-URL: Changelog, https://pymupdf.readthedocs.io/en/latest/changes.html

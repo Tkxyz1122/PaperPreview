@@ -1,0 +1,31 @@
+# Local Python environment and caches
+.venv/
+__pycache__/
+*.py[cod]
+.environment.lock
+
+# Personal paths and first-import timestamps
+library_config.json
+library_state.json
+library_*.json.tmp
+.pick-*.txt
+
+# Machine-specific shortcuts and runtime logs
+*.lnk
+*.log
+
+# Personal papers are not part of the application
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
+*.epub
+*.djvu
+*.rtf
+
+# Editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
