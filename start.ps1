@@ -55,7 +55,12 @@ try {
     $taskLock = $null
     try {
         $taskShell = New-Object -ComObject WScript.Shell
-        $taskShortcut = $taskShell.CreateShortcut((Join-Path $taskApp '打开论文预览.lnk'))
+        $taskShortcutPath = Join-Path $taskApp '论文浏览器.lnk'
+        $taskLegacyShortcutPath = Join-Path $taskApp '打开论文预览.lnk'
+        if ((Test-Path -LiteralPath $taskLegacyShortcutPath -PathType Leaf) -and (-not (Test-Path -LiteralPath $taskShortcutPath))) {
+            Move-Item -LiteralPath $taskLegacyShortcutPath -Destination $taskShortcutPath
+        }
+        $taskShortcut = $taskShell.CreateShortcut($taskShortcutPath)
         $taskShortcut.TargetPath = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
         $taskShortcut.Arguments = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "' + $PSCommandPath + '"'
         $taskShortcut.WorkingDirectory = $taskApp
