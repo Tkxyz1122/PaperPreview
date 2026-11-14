@@ -120,6 +120,9 @@ html{zoom:var(--page-zoom)}.year-filter{display:flex;flex-direction:column;gap:7
 /* Keep the folder tree scrollable without a visible scrollbar. */
 .tree{scrollbar-width:none;-ms-overflow-style:none}
 .tree::-webkit-scrollbar{display:none;width:0;height:0}
+/* Selection controls: 80% of the previous 41px / 36px height. */
+.year-filter select,.toolbar select,.select-trigger{height:32.8px}
+@media(max-width:650px){.year-filter select,.toolbar select,.select-wrap .select-trigger{height:28.8px}}
 </style>
 </head>
 <body>

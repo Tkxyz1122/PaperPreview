@@ -259,8 +259,18 @@ class PaperLibrary:
         if self.root is None:
             raise LibraryError('请先设置论文存放路径。', 409)
 
+    def _nested_interpretation_root(self):
+        if self.root is None or not self.interpretation_root:
+            return None
+        reading = Path(self.interpretation_root).resolve()
+        return reading if reading != self.root and reading.is_relative_to(self.root) else None
+
     def _skip_directory(self, path):
-        return path.resolve() == self.runtime or path.resolve().is_relative_to(self.runtime)
+        resolved = path.resolve()
+        if resolved == self.runtime or resolved.is_relative_to(self.runtime):
+            return True
+        reading = self._nested_interpretation_root()
+        return reading is not None and resolved.is_relative_to(reading)
 
     def set_interpretation_root(self, directory, persist=False):
         if not isinstance(directory, str) or not directory.strip():
@@ -428,6 +438,7 @@ if ($folder) {
         year_now = current_year if current_year is not None else datetime.now().year
         report = {'currentYear': year_now, 'imported': [], 'archived': [], 'conflicts': [], 'errors': []}
         with self.lock:
+            reading = self._nested_interpretation_root()
             # Archive first, so new old-year papers join an existing archived quarter.
             for source in list(self.root.iterdir()):
                 match = re.fullmatch(r'(\d{4})-(\d{1,2})-(\d{1,2})', source.name)
@@ -435,6 +446,9 @@ if ($folder) {
                     continue
                 year, start, end = map(int, match.groups())
                 if year == year_now or start not in (1, 4, 7, 10) or end != start + 2:
+                    continue
+                # Keep a configured reading directory and its containing quarter in place.
+                if self._skip_directory(source) or (reading is not None and reading.is_relative_to(source.resolve())):
                     continue
                 try:
                     target = self._annual_folder(year) / source.name
@@ -503,6 +517,8 @@ if ($folder) {
             raise LibraryError('原文件已被移动或删除，请刷新目录。', 404)
         if not path.is_relative_to(self.root) or not path.is_file() or path.suffix.lower() not in SUPPORTED:
             raise LibraryError('只能访问论文资料内的文档。', 403)
+        if self._skip_directory(path.parent):
+            raise LibraryError('该文件夹不属于普通论文列表，请从对应的解读入口打开。', 403)
         if require_pdf and path.suffix.lower() != '.pdf':
             raise LibraryError('此操作仅适用于 PDF 文件。')
         return path

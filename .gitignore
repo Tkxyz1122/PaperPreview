@@ -3,6 +3,7 @@
 __pycache__/
 *.py[cod]
 .environment.lock
+/_Temp/
 
 # Personal paths and first-import timestamps
 library_config.json
